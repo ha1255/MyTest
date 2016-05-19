@@ -1,5 +1,5 @@
 import urllib
-import binascii  
+import binascii
 import struct
 import os,sys
 
@@ -8,7 +8,7 @@ import os,sys
 base = [str(x) for x in range(10)] + [ chr(x) for x in range(ord('A'),ord('A')+6)]
 #print base
 # bin2dec
-# 二进制 to 十进制: int(str,n=10) 
+# 二进制 to 十进制: int(str,n=10)
 def bin2dec(string_num):
     return str(int(string_num, 2))
 
@@ -18,7 +18,7 @@ def hex2dec(string_num):
     return str(int(string_num.upper(), 16))
 
 # dec2bin
-# 十进制 to 二进制: bin() 
+# 十进制 to 二进制: bin()
 def dec2bin(string_num):
     num = int(string_num)
     mid = []
@@ -30,8 +30,8 @@ def dec2bin(string_num):
     return ''.join([str(x) for x in mid[::-1]])
 
 # dec2hex
-# 十进制 to 八进制: oct() 
-# 十进制 to 十六进制: hex() 
+# 十进制 to 八进制: oct()
+# 十进制 to 十六进制: hex()
 def dec2hex(string_num):
     num = int(string_num)
     mid = []
@@ -43,12 +43,12 @@ def dec2hex(string_num):
     return ''.join([str(x) for x in mid[::-1]])
 
 # hex2tobin
-# 十六进制 to 二进制: bin(int(str,16)) 
+# 十六进制 to 二进制: bin(int(str,16))
 def hex2bin(string_num):
     return dec2bin(hex2dec(string_num.upper()))
 
 # bin2hex
-# 二进制 to 十六进制: hex(int(str,2)) 
+# 二进制 to 十六进制: hex(int(str,2))
 def bin2hex(string_num):
     return dec2hex(bin2dec(string_num))
 
@@ -66,37 +66,37 @@ def covertTextFiletoBinStr(filename):
     with open(filename,'r') as f:
         while True:
             ts=f.read(1)
-            if len(ts) == 0:  
-                break  
+            if len(ts) == 0:
+                break
             #str_temp = bin(int(ts.encode('hex'),16)).replace('0b','')
             #print ts.encode('hex')
-            str_temp = hexstr2binstr(ts)        
-            #if the length is less than 8 , fill 0        
+            str_temp = hexstr2binstr(ts)
+            #if the length is less than 8 , fill 0
             if len(str_temp)<8:
-                str_temp =str_temp.rjust(read_len,'0') 
+                str_temp =str_temp.rjust(read_len,'0')
             #trans to utf-8 bin
             start0 = str_temp.index('0')
             if start0 >0:
                 ts = f.read(start0-1)
-                str_temp += hexstr2binstr(ts)            
+                str_temp += hexstr2binstr(ts)
             strs.append(str_temp)
     return strs
 
 #convert utf-8 html to binary string
 def covertHTMLtoBinStr(url):
-    resp = urllib.urlopen(url)    
+    resp = urllib.urlopen(url)
     while True:
         ts = resp.read(1)
         if len(ts) == 0:
             break
-        str_temp = hexstr2binstr(ts)          
+        str_temp = hexstr2binstr(ts)
         if len(str_temp)<8:
-            str_temp =str_temp.rjust(read_len,'0') 
+            str_temp =str_temp.rjust(read_len,'0')
         #trans to utf-8 bin
         start0 = str_temp.index('0')
         if start0 >0:
             ts = resp.read(start0-1)
-            str_temp += hexstr2binstr(ts)            
+            str_temp += hexstr2binstr(ts)
         strs.append(str_temp)
     resp.close()
     return strs
@@ -118,7 +118,7 @@ def hexstr2byte(s):
         s1+=chr((b1 << 4)+b2)
     return s1
 
-def hexstr2binhexstr(s):    
+def hexstr2binhexstr(s):
     i=0
     s1=''
     while i< len(s):
@@ -126,17 +126,18 @@ def hexstr2binhexstr(s):
         if i==0:
             s1=c1
         else:
-            s1 += ' '+c1    
+            s1 += ' '+c1
         i += 2
     return s1
-        
-        
+
+
 #test
 #bins = covertHTMLtoBinStr("http://www.baidu.com")
 bins = covertTextFiletoBinStr('1.txt')
 bins = ''.join(bins)
 hexs = bin2hex(bins)
-outs = str2byte(hexs)
+hex2 = hexstr2binhexstr(hexs)
+utfsource =hexstr2byte(hexs) 
 print '=========================================================================='
 print 'bin:'
 print bins
@@ -146,7 +147,7 @@ print hexs
 print '=========================================================================='
 print 'hex2:'
 #print ' '.join([str(x) for x in hexs[::2]])
-print hexstr2binhexstr(hexs)
+print hex2
 print '=========================================================================='
 print 'utf8:'
-print outs
+print utfsource

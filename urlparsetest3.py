@@ -63,45 +63,37 @@ def downloadImage(imageUrl):
     path = dir+"/"+image  
     data = urllib.urlopen(imageUrl).read()  
     f = file(path,"wb")  
-    f.write(data)  
-    f.close()  
+    f.write(data)
+    f.close()
+    print "download image success: " +imageUrl
 
-def mynewparser():
-    
-    urls = "http://image.baidu.com/search/index?tn=baiduimage&ct=201326592&lm=-1&cl=2&ie=gbk&word=%C3%C0%C5%AE&fr=ala&ala=1&alatpl=cover&pos=0#z=0&pn=&ic=0&st=-1&face=0&s=0&lm=-1"
-    
-    resp = urllib.urlopen(urls)
+def getBaiduSerachPictures(url):    
+    resp = urllib.urlopen(url)
     ss = resp.read()   
-
-    pattern = re.compile(r'.*"objURL":"(.*)".*')
-    
+    pattern = re.compile(r'"objURL":"(.*)"')    
     plist = pattern.findall(ss)
-    
+    i=0
     for p in plist:
-        downloadImage(p)
-        print "download image success: " +p
+        print p
+        #downloadImage(p)
+        i += 1
+
+def getUrlLinks(url):
+    a = MyHTMLParser()    
+    st = getHTMLSource(url)
+    a.feed(st)
+    a.close()
     
-#    for line in ht
-#        match = re.match(pattern,st)
-#        if match:
-#            print match.group(1)
+    for l in a.links:
+        print l
+    print "======================================"
     
+    with open("img.txt","w") as f:    
+        for p in a.pictures:
+            downloadImage(p)
+            f.writelines(p+"\n")
+            print "download image success: " +p
 
-mynewparser()
-
-
-#a = MyHTMLParser()    
-#urls = "http://image.baidu.com/search/index?tn=baiduimage&ct=201326592&lm=-1&cl=2&ie=gbk&word=%C3%C0%C5%AE&fr=ala&ala=1&alatpl=cover&pos=0#z=0&pn=&ic=0&st=-1&face=0&s=0&lm=-1"
-#st = getHTMLSource(urls)
-#a.feed(st)
-#a.close()
-
-#for l in a.links:
-#    print l
-#print "======================================"
-#
-#with open("img.txt","w") as f:    
-#    for p in a.pictures:
-#        downloadImage(p)
-#        f.writelines(p+"\n")
-#        print "download image success: " +p
+#test
+url = "http://image.baidu.com/search/index?tn=baiduimage&ct=201326592&lm=-1&cl=2&ie=gbk&word=%C3%C0%C5%AE&fr=ala&ala=1&alatpl=cover&pos=0#z=0&pn=&ic=0&st=-1&face=0&s=0&lm=-1"
+getBaiduSerachPictures(url)
